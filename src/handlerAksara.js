@@ -1,15 +1,12 @@
-const { nanoid } = require("nanoid");
 const aksara = require("./aksara");
 
 const addAksaraHandler = (request, h) => {
-  const { label, imgUrl } = request.payload;
-
-  const id = nanoid(16);
+  const { id, label, imgUrl } = request.payload;
 
   const insertedAt = new Date().toISOString();
   const updatedAt = insertedAt;
 
-  if (!label || !imgUrl) {
+  if (!id || !label || !imgUrl) {
     const response = h.response({
       status: "fail",
       message: "Gagal menambahkan aksara. Mohon isi semua data yang diperlukan",

@@ -227,7 +227,9 @@ const getTenRandomQuizsHandler = (request, h) => {
 
   return h.response({
     status: "success",
-    data: randomQuizs,
+    data: {
+      quizs: randomQuizs,
+    },
   });
 };
 
