@@ -1,12 +1,15 @@
+const { nanoid } = require("nanoid");
 const aksara = require("./aksara");
 
 const addAksaraHandler = (request, h) => {
-  const { id, label, imgUrl } = request.payload;
+  const { number, label, imgUrl } = request.payload;
+
+  const id = nanoid(16);
 
   const insertedAt = new Date().toISOString();
   const updatedAt = insertedAt;
 
-  if (!id || !label || !imgUrl) {
+  if (!number || !label || !imgUrl) {
     const response = h.response({
       status: "fail",
       message: "Gagal menambahkan aksara. Mohon isi semua data yang diperlukan",
@@ -18,6 +21,7 @@ const addAksaraHandler = (request, h) => {
 
   const newAksara = {
     id,
+    number,
     label,
     imgUrl,
     insertedAt,
@@ -49,11 +53,14 @@ const getAllAksaraHandler = (request) => {
     );
   }
 
-  const simplifiedAksara = filteredAksara.map(({ id, label, imgUrl }) => ({
-    id,
-    label,
-    imgUrl,
-  }));
+  const simplifiedAksara = filteredAksara.map(
+    ({ id, number, label, imgUrl }) => ({
+      id,
+      number,
+      label,
+      imgUrl,
+    })
+  );
 
   return {
     status: "success",
@@ -88,9 +95,9 @@ const getAksaraByIdHandler = (request, h) => {
 const editAksaraByIdHandler = (request, h) => {
   const { aksaraId } = request.params;
 
-  const { label, imgUrl } = request.payload;
+  const { number, label, imgUrl } = request.payload;
 
-  if (!label || !imgUrl) {
+  if (!number || !label || !imgUrl) {
     const response = h.response({
       status: "fail",
       message: "Gagal memperbarui aksara. Mohon isi semua data yang diperlukan",
@@ -105,6 +112,7 @@ const editAksaraByIdHandler = (request, h) => {
   if (index !== -1) {
     aksara[index] = {
       ...aksara[index],
+      number,
       label,
       imgUrl,
       updatedAt,
