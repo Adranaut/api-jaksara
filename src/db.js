@@ -1,25 +1,20 @@
-const { Client } = require("pg");
+import pg from "pg";
 
-let client;
+const { Pool } = pg;
+
+const pool = new Pool({
+  connectionString: process.env.POSTGRES_URL,
+});
 
 async function connectToDatabase() {
-  if (!client) {
-    client = new Client({
-      connectionString: process.env.POSTGRES_URL,
-      ssl: {
-        rejectUnauthorized: false,
-      },
-    });
-
-    try {
-      await client.connect();
-      console.log("Connected to PostgreSQL database");
-    } catch (error) {
-      console.error("Error connecting to PostgreSQL database:", error);
-      throw error;
-    }
+  try {
+    const client = await pool.connect();
+    console.log("Connected to PostgreSQL database");
+    return client;
+  } catch (error) {
+    console.error("Error connecting to PostgreSQL database:", error);
+    throw error;
   }
-  return client;
 }
 
-module.exports = { connectToDatabase };
+export { connectToDatabase };
