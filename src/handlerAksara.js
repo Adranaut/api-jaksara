@@ -4,36 +4,38 @@ const aksara = require("./aksara");
 const { connectToDatabase } = require("./db");
 
 const addAksaraHandler = async (request, h) => {
-  try {
-    const client = await connectToDatabase();
-    const { number, label, imgUrl } = request.payload;
+  const client = await connectToDatabase();
+  const { number, label, imgUrl } = request.payload;
 
-    const id = nanoid(16);
-
-    const insertedAt = new Date().toISOString();
-    const updatedAt = insertedAt;
-
-    if (!number || !label || !imgUrl) {
-      const response = h.response({
+  if (!number || !label || !imgUrl) {
+    return h
+      .response({
         status: "fail",
         message:
           "Gagal menambahkan aksara. Mohon isi semua data yang diperlukan",
-      });
-      response.code(400);
-      response.header("Content-Type", "application/json");
-      return response;
-    }
+      })
+      .code(400);
+  }
+
+  try {
+    const id = nanoid(16);
+    const insertedAt = new Date().toISOString();
+    const updatedAt = insertedAt;
 
     const query =
-      "INSERT INTO aksara (id, number, label, img_url, insertedat, updatedat) VALUES ($1, $2, $3, $4, $5, $6) RETURNING *";
+      "INSERT INTO aksara (id, number, label, img_url, inserted_at, updated_at) VALUES ($1, $2, $3, $4, $5, $6) RETURNING *";
     const values = [id, number, label, imgUrl, insertedAt, updatedAt];
     const result = await client.query(query, values);
 
-    return {
-      status: "success",
-      message: "Aksara berhasil ditambahkan",
-      data: result.rows[0],
-    };
+    return h
+      .response({
+        status: "success",
+        message: "Aksara berhasil ditambahkan",
+        data: {
+          aksaraId: id,
+        },
+      })
+      .code(201);
   } catch (error) {
     console.error("Error adding aksara:", error);
     return h
