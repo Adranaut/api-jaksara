@@ -24,7 +24,7 @@ const addAksaraHandler = async (request, h) => {
 
   try {
     const query =
-      "INSERT INTO aksara (id, number, label, img_url, insertedAt, updatedAt) VALUES ($1, $2, $3, $4, $5, $6) RETURNING *";
+      "INSERT INTO aksara (id, number, label, img_url, insertedat, updatedat) VALUES ($1, $2, $3, $4, $5, $6) RETURNING *";
     const values = [id, number, label, imgUrl, insertedAt, updatedAt];
     const result = await client.query(query, values);
 
