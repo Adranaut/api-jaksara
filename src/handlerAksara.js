@@ -4,25 +4,26 @@ const aksara = require("./aksara");
 const { connectToDatabase } = require("./db");
 
 const addAksaraHandler = async (request, h) => {
-  const client = await connectToDatabase();
-  const { number, label, imgUrl } = request.payload;
-
-  const id = nanoid(16);
-
-  const insertedAt = new Date().toISOString();
-  const updatedAt = insertedAt;
-
-  if (!number || !label || !imgUrl) {
-    const response = h.response({
-      status: "fail",
-      message: "Gagal menambahkan aksara. Mohon isi semua data yang diperlukan",
-    });
-    response.code(400);
-    response.header("Content-Type", "application/json");
-    return response;
-  }
-
   try {
+    const client = await connectToDatabase();
+    const { number, label, imgUrl } = request.payload;
+
+    const id = nanoid(16);
+
+    const insertedAt = new Date().toISOString();
+    const updatedAt = insertedAt;
+
+    if (!number || !label || !imgUrl) {
+      const response = h.response({
+        status: "fail",
+        message:
+          "Gagal menambahkan aksara. Mohon isi semua data yang diperlukan",
+      });
+      response.code(400);
+      response.header("Content-Type", "application/json");
+      return response;
+    }
+
     const query =
       "INSERT INTO aksara (id, number, label, img_url, insertedat, updatedat) VALUES ($1, $2, $3, $4, $5, $6) RETURNING *";
     const values = [id, number, label, imgUrl, insertedAt, updatedAt];
