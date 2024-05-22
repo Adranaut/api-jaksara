@@ -1,46 +1,74 @@
 const { nanoid } = require("nanoid");
 const aksara = require("./aksara");
 
-const addAksaraHandler = (request, h) => {
+const { connectToDatabase } = require("./db");
+
+const addAksaraHandler = async (request, h) => {
+  const client = await connectToDatabase();
   const { number, label, imgUrl } = request.payload;
 
-  const id = nanoid(16);
+  try {
+    const query =
+      "INSERT INTO aksara (number, label, img_url) VALUES ($1, $2, $3) RETURNING *";
+    const values = [number, label, imgUrl];
+    const result = await client.query(query, values);
 
-  const insertedAt = new Date().toISOString();
-  const updatedAt = insertedAt;
-
-  if (!number || !label || !imgUrl) {
-    const response = h.response({
-      status: "fail",
-      message: "Gagal menambahkan aksara. Mohon isi semua data yang diperlukan",
-    });
-    response.code(400);
-    response.header("Content-Type", "application/json");
-    return response;
+    return {
+      status: "success",
+      message: "Aksara berhasil ditambahkan",
+      data: result.rows[0],
+    };
+  } catch (error) {
+    console.error("Error adding aksara:", error);
+    return h
+      .response({
+        status: "fail",
+        message: "Gagal menambahkan aksara",
+      })
+      .code(500);
   }
-
-  const newAksara = {
-    id,
-    number,
-    label,
-    imgUrl,
-    insertedAt,
-    updatedAt,
-  };
-
-  aksara.push(newAksara);
-
-  const response = h.response({
-    status: "success",
-    message: "Aksara berhasil ditambahkan",
-    data: {
-      aksaraId: id,
-    },
-  });
-  response.code(201);
-  response.header("Content-Type", "application/json");
-  return response;
 };
+
+// const addAksaraHandler = (request, h) => {
+//   const { number, label, imgUrl } = request.payload;
+
+//   const id = nanoid(16);
+
+//   const insertedAt = new Date().toISOString();
+//   const updatedAt = insertedAt;
+
+//   if (!number || !label || !imgUrl) {
+//     const response = h.response({
+//       status: "fail",
+//       message: "Gagal menambahkan aksara. Mohon isi semua data yang diperlukan",
+//     });
+//     response.code(400);
+//     response.header("Content-Type", "application/json");
+//     return response;
+//   }
+
+//   const newAksara = {
+//     id,
+//     number,
+//     label,
+//     imgUrl,
+//     insertedAt,
+//     updatedAt,
+//   };
+
+//   aksara.push(newAksara);
+
+//   const response = h.response({
+//     status: "success",
+//     message: "Aksara berhasil ditambahkan",
+//     data: {
+//       aksaraId: id,
+//     },
+//   });
+//   response.code(201);
+//   response.header("Content-Type", "application/json");
+//   return response;
+// };
 
 const getAllAksaraHandler = (request) => {
   const { label } = request.query;
