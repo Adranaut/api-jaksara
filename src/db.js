@@ -1,20 +1,20 @@
-import pg from "pg";
+// import pg from "pg";
 
-const { Pool } = pg;
+// const { Pool } = pg;
 
-const pool = new Pool({
-  connectionString: process.env.POSTGRES_URL,
-});
+// const pool = new Pool({
+//   connectionString: process.env.POSTGRES_URL,
+// });
 
-async function connectToDatabase() {
-  try {
-    const client = await pool.connect();
-    console.log("Connected to PostgreSQL database");
-    return client;
-  } catch (error) {
-    console.error("Error connecting to PostgreSQL database:", error);
-    throw error;
-  }
-}
+// async function connectToDatabase() {
+//   try {
+//     const client = await pool.connect();
+//     console.log("Connected to PostgreSQL database");
+//     return client;
+//   } catch (error) {
+//     console.error("Error connecting to PostgreSQL database:", error);
+//     throw error;
+//   }
+// }
 
-export { connectToDatabase };
+// export { connectToDatabase };
